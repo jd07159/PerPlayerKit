@@ -378,14 +378,18 @@ public class KitManager {
 
     }
 
+    public boolean hasEC(UUID uuid, int slot) {
+        return kitByKitIDMap.get(IDUtil.getECId(uuid, slot)) != null;
+
+    }
+
+    public ItemStack[] getPlayerEC(UUID uuid, int slot) {
+            return kitByKitIDMap.get(IDUtil.getECId(uuid, slot));
+    }
+
 
     public ItemStack[] getPlayerKit(UUID uuid, int slot) {
-        if (hasKit(uuid, slot)) {
             return kitByKitIDMap.get(IDUtil.getPlayerKitId(uuid, slot));
-        } else {
-            return null;
-        }
-
     }
 
     public boolean hasPublicKit(String id) {
@@ -394,11 +398,7 @@ public class KitManager {
     }
 
     public ItemStack[] getPublicKit(String id) {
-        if (hasPublicKit(id)) {
             return kitByKitIDMap.get(IDUtil.getPublicKitId(id));
-        } else {
-            return null;
-        }
     }
 
     public void loadPlayerDataFromDB(UUID uuid) {
