@@ -230,7 +230,7 @@ public class KitManager {
                         }
 
 
-                        kitByKitIDMap.put(IDUtil.getPlayerKitId(uuid, slot), ItemFilter.filterItemStack(kit));
+                        kitByKitIDMap.put(IDUtil.getPlayerKitId(uuid, slot), ItemFilter.get().filterItemStack(kit));
 
                         return true;
                     } else {
@@ -407,7 +407,7 @@ public class KitManager {
             if (!data.equalsIgnoreCase("error")) {
                 try {
                     ItemStack[] kit = Serializer.itemStackArrayFromBase64(data);
-                    kitByKitIDMap.put(IDUtil.getPlayerKitId(uuid, slot), ItemFilter.filterItemStack(Serializer.itemStackArrayFromBase64(data)));
+                    kitByKitIDMap.put(IDUtil.getPlayerKitId(uuid, slot), ItemFilter.get().filterItemStack(Serializer.itemStackArrayFromBase64(data)));
 
                 } catch (IOException ignored) {
                 }
@@ -418,7 +418,7 @@ public class KitManager {
             if (!data.equalsIgnoreCase("error")) {
                 try {
                     ItemStack[] kit = Serializer.itemStackArrayFromBase64(data);
-                    kitByKitIDMap.put(IDUtil.getECId(uuid, slot), ItemFilter.filterItemStack(Serializer.itemStackArrayFromBase64(data)));
+                    kitByKitIDMap.put(IDUtil.getECId(uuid, slot), ItemFilter.get().filterItemStack(Serializer.itemStackArrayFromBase64(data)));
 
                 } catch (IOException ignored) {
                 }
@@ -447,7 +447,7 @@ public class KitManager {
 
     private void saveKitToDB(String key, boolean removeAfterSave) {
         if (kitByKitIDMap.get(key) != null) {
-            PerPlayerKit.storageManager.saveKitDataByID(key, Serializer.itemStackArrayToBase64(ItemFilter.filterItemStack(kitByKitIDMap.get(key))));
+            PerPlayerKit.storageManager.saveKitDataByID(key, Serializer.itemStackArrayToBase64(ItemFilter.get().filterItemStack(kitByKitIDMap.get(key))));
             if (removeAfterSave) {
                 kitByKitIDMap.remove(key);
             }
@@ -461,7 +461,7 @@ public class KitManager {
         if (!data.equalsIgnoreCase("error")) {
             try {
                 ItemStack[] kit = Serializer.itemStackArrayFromBase64(data);
-                kitByKitIDMap.put(IDUtil.getPublicKitId(id), ItemFilter.filterItemStack(kit));
+                kitByKitIDMap.put(IDUtil.getPublicKitId(id), ItemFilter.get().filterItemStack(kit));
 
             } catch (IOException ignored) {
                 plugin.getLogger().info("Error loading public kit " + id);
