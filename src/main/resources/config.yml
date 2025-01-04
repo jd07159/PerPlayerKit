@@ -24,7 +24,7 @@ redis:
 
 
 motd:
-  enabled: true
+  enabled: false
   delay: 5
   message: #join messages using mini message format
     - ""
@@ -36,7 +36,7 @@ motd:
     - ""
 
 scheduled-broadcast: #uses mini message format
-  enabled: true
+  enabled: false
   period: 90 #in seconds
   messages:
     - "<white>Check out public kits with the<aqua>/pk<white> command!"
@@ -47,20 +47,20 @@ scheduled-broadcast: #uses mini message format
 kitroom:
   items:
     1:
-      name: "OG Vanilla"
-      material: "DIAMOND_SWORD"
+      name: "&lVanilla"
+      material: "END_CRYSTAL"
     2:
-      name: "Training"
-      material: "WOODEN_SWORD"
-    3:
-      name: "Potions"
+      name: "&8&lPotions"
       material: "SPLASH_POTION"
+    3:
+      name: "&7&lMisc"
+      material: "FISHING_ROD"
     4:
-      name: "Armory"
-      material: "NETHERITE_SWORD"
+        name: "Weapons"
+        material: "NETHERITE_SWORD"
     5:
-      name: "Axe & UHC"
-      material: "SHIELD"
+        name: "Misc"
+        material: "PINK_SHULKER_BOX"
 
 disabled-command-worlds:
   - "example_world"
@@ -70,10 +70,13 @@ disabled-command-message: "&cKits are disabled here!"
 
 publickits:
   1:
-    name: "Kit 1"
-    icon: "DIAMOND_SWORD"
+    name: "&ePractice Kit"
+    icon: "NETHERITE_CHESTPLATE"
+  2:
+    name: "&dDrain"
+    icon: "END_CRYSTAL"
 
-prefix: "<gray>[<aqua>Kits</aqua>]</gray> "
+prefix: "<gold>🗡</gold> "
 
 messages:
   player-repaired: "<gray>%player% repaired their gear</gray>"
@@ -90,6 +93,8 @@ anti-exploit:
   import-filter: true
   prevent-shulkers-dropping-items: true
 
+feature:
+  kitload-heal: true
 
 regear:
   command-cooldown: 5 #command cooldown in seconds
