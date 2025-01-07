@@ -74,7 +74,7 @@ public class KitMenuCloseListener implements Listener {
     @EventHandler
     public void onEnderchestEditorClose(InventoryCloseEvent e) {
         Inventory inv = e.getInventory();
-        if (inv.getSize() == 54) {
+        if (inv.getSize() == 36) {
             if (inv.getLocation() == null) {
                 InventoryView view = e.getView();
                 if (view.getTitle().contains(ChatColor.BLUE + "Enderchest: ")) {
@@ -85,10 +85,10 @@ public class KitMenuCloseListener implements Listener {
                     ItemStack[] chestitems = e.getInventory().getContents();
 
                     for (int i = 0; i < 27; i++) {
-                        if (chestitems[i + 9] == null) {
+                        if (chestitems[i] == null) {
                             kit[i] = null;
                         } else {
-                            kit[i] = chestitems[i + 9].clone();
+                            kit[i] = chestitems[i].clone();
                         }
 
                     }
