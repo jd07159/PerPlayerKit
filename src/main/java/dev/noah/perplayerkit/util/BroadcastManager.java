@@ -1,5 +1,24 @@
+/*
+ * Copyright 2022-2025 Noah Ross
+ *
+ * This file is part of PerPlayerKit.
+ *
+ * PerPlayerKit is free software: you can redistribute it and/or modify it under
+ * the terms of the GNU Affero General Public License as published by the
+ * Free Software Foundation, either version 3 of the License, or (at your
+ * option) any later version.
+ *
+ * PerPlayerKit is distributed in the hope that it will be useful, but WITHOUT ANY
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for
+ * more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with PerPlayerKit. If not, see <https://www.gnu.org/licenses/>.
+ */
 package dev.noah.perplayerkit.util;
 
+import me.clip.placeholderapi.PlaceholderAPI;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
@@ -51,6 +70,10 @@ public class BroadcastManager {
 
     private void broadcastMessage(Player player, String message) {
         World world = player.getWorld();
+
+        if(Bukkit.getPluginManager().getPlugin("PlaceholderAPI")!=null) {
+            message = PlaceholderAPI.setPlaceholders(player, message);
+        }
 
         for (Player broadcastPlayer : world.getPlayers()) {
             if (broadcastPlayer.getLocation().distance(player.getLocation()) < broadcastDistance) {
