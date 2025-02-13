@@ -24,7 +24,7 @@ jobs:
         run: mvn clean package
 
       - name: Upload JAR file as artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: PerPlayerKits
           path: target/*.jar
