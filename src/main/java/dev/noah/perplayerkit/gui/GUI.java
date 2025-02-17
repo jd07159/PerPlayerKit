@@ -260,18 +260,21 @@ public class GUI {
         } else {
             menu.getSlot(53).setItem(createItem(Material.BARRIER, page + 1, "&c&lEDIT MENU", "&cSHIFT RIGHT CLICK TO SAVE"));
         }
-        addKitRoom(menu.getSlot(47), 0);
+        addKitRoom(menu.getSlot(48), 0);
+        addKitRoom(menu.getSlot(49), 1);
+        addKitRoom(menu.getSlot(50), 2);
+        /*addKitRoom(menu.getSlot(47), 0);
         addKitRoom(menu.getSlot(48), 1);
         addKitRoom(menu.getSlot(49), 2);
         addKitRoom(menu.getSlot(50), 3);
-        addKitRoom(menu.getSlot(51), 4);
+        addKitRoom(menu.getSlot(51), 4); < default*/
 
         // add kit room buttons for the sections from config
-        for (int i = 1; i < 6; i++) {
-            menu.getSlot(46 + i).setItem(addHideFlags(createItem(Material.valueOf(plugin.getConfig().getString("kitroom.items." + i + ".material")), "&r" + plugin.getConfig().getString("kitroom.items." + i + ".name"))));
+        for (int i = 1; i < 4; i++) {
+            menu.getSlot(47 + i).setItem(addHideFlags(createItem(Material.valueOf(plugin.getConfig().getString("kitroom.items." + i + ".material")), "&r" + plugin.getConfig().getString("kitroom.items." + i + ".name"))));
         }
 
-        menu.getSlot(page + 47).setItem(ItemUtil.addEnchantLook(menu.getSlot(page + 47).getItem(p)));
+        menu.getSlot(page + 48).setItem(ItemUtil.addEnchantLook(menu.getSlot(page + 48).getItem(p)));
 
         menu.setCursorDropHandler(Menu.ALLOW_CURSOR_DROPPING);
         menu.open(p);
