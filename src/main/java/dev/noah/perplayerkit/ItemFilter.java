@@ -105,15 +105,6 @@ public class ItemFilter {
 
             }
 
-            if (i.hasItemMeta()) {
-                ItemMeta meta = i.getItemMeta();
-                if (meta != null && meta.hasAttributeModifiers()) {
-                    return false;
-                }
-                return meta != null && meta.getItemFlags().isEmpty();
-
-            }
-
         }
         return true;
     }
