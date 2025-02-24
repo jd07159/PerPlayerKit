@@ -89,6 +89,10 @@ commands:
       - pk
       - premadekit
 
+  pktoggle:
+    usage: /<command>
+    permission: perplayerkit.kit
+
   k1:
     usage: /<command>
     permission: perplayerkit.kit

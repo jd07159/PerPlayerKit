@@ -34,12 +34,14 @@ public class YAMLStorage implements StorageManager {
 
     private final File storageFile;
     private Map<String, String> data;
+    private Map<String, Boolean> toggleData;
     private Plugin plugin;
 
-    public YAMLStorage(Plugin plugin,String filePath) {
+    public YAMLStorage(Plugin plugin, String filePath) {
         this.plugin = plugin;
         this.storageFile = new File(filePath);
         this.data = new HashMap<>();
+        this.toggleData = new HashMap<>();
     }
 
     @Override
@@ -58,9 +60,14 @@ public class YAMLStorage implements StorageManager {
             if (storageFile.exists()) {
                 Yaml yaml = new Yaml();
                 try (FileInputStream inputStream = new FileInputStream(storageFile)) {
-                    Map<String, String> loadedData = yaml.load(inputStream);
+                    Map<String, Object> loadedData = yaml.load(inputStream);
                     if (loadedData != null) {
-                        data = loadedData;
+                        if (loadedData.containsKey("kits")) {
+                            this.data = (Map<String, String>) loadedData.get("kits");
+                        }
+                        if (loadedData.containsKey("toggles")) {
+                            this.toggleData = (Map<String, Boolean>) loadedData.get("toggles");
+                        }
                     }
                 }
             } else {
@@ -117,12 +124,32 @@ public class YAMLStorage implements StorageManager {
         }
     }
 
+    @Override
+    public void setToggleState(String uuid, String toggleID, boolean state) {
+        this.toggleData.put(uuid + ":" + toggleID, state);
+        try {
+            saveToFile();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public boolean getToggleState(String uuid, String toggleID) {
+        return toggleData.getOrDefault(uuid + ":" + toggleID, false);
+    }
+
     private void saveToFile() throws IOException {
         DumperOptions options = new DumperOptions();
         options.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK);
         Yaml yaml = new Yaml(options);
+
+        Map<String, Object> saveData = new HashMap<>();
+        saveData.put("kits", data);
+        saveData.put("toggles", toggleData);
+
         try (FileWriter writer = new FileWriter(storageFile)) {
-            yaml.dump(data, writer);
+            yaml.dump(saveData, writer);
         }
     }
 }

@@ -124,6 +124,26 @@ public class RedisStorage implements StorageManager {
         }
     }
 
+    @Override
+    public void setToggleState(String uuid, String toggleID, boolean state) {
+        try (Jedis jedis = getConnection()) {
+            jedis.set(uuid + ":" + toggleID, String.valueOf(state));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public boolean getToggleState(String uuid, String toggleID) {
+        try (Jedis jedis = getConnection()) {
+            String value = jedis.get(uuid + ":" + toggleID);
+            return value != null && Boolean.parseBoolean(value);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
     private Jedis getConnection() {
         if (pool == null) {
             throw new IllegalStateException("Redis pool is not initialized. Call connect() first.");

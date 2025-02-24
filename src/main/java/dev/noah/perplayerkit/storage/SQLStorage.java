@@ -38,10 +38,21 @@ public class SQLStorage implements StorageManager {
 
     private void createTable() throws SQLException{
         PreparedStatement ps;
-            ps = db.getConnection().prepareStatement("CREATE TABLE IF NOT EXISTS kits "
-                    + "(KITID VARCHAR(100),KITDATA TEXT(15000), PRIMARY KEY (KITID) )");
+            ps = db.getConnection().prepareStatement("CREATE TABLE IF NOT EXISTS kits " +
+                    "(KITID VARCHAR(100)," +
+                    "KITDATA TEXT(15000)," +
+                    " PRIMARY KEY (KITID) )");
             ps.executeUpdate();
 
+        PreparedStatement ps2;
+            ps2 = db.getConnection().prepareStatement(
+                "CREATE TABLE IF NOT EXISTS toggles (" +
+                        "UUID VARCHAR(36), " +
+                        "TOGGLE_ID VARCHAR(100), " +
+                        "STATE BOOLEAN DEFAULT FALSE, " +
+                        "PRIMARY KEY (UUID, TOGGLE_ID))"
+        );
+        ps2.executeUpdate();
     }
 
     @Override
@@ -152,6 +163,33 @@ public class SQLStorage implements StorageManager {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+    }
+
+    public void setToggleState(String uuid, String toggleID, boolean state) {
+        try {
+            PreparedStatement ps = db.getConnection().prepareStatement("INSERT OR REPLACE INTO toggles (UUID, TOGGLE_ID, STATE) VALUES (?, ?, ?)");
+            ps.setString(1, uuid);
+            ps.setString(2, toggleID);
+            ps.setBoolean(3, state);
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public boolean getToggleState(String uuid, String toggleID) {
+        try {
+            PreparedStatement ps = db.getConnection().prepareStatement("SELECT STATE FROM toggles WHERE UUID=? AND TOGGLE_ID=?");
+            ps.setString(1, uuid);
+            ps.setString(2, toggleID);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                return rs.getBoolean(1);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
     }
 
 }

@@ -42,5 +42,8 @@ public interface StorageManager {
 
     void deleteKitByID(String kitID);
 
-}
+    void setToggleState(String uuid, String toggleID, boolean state);
 
+    boolean getToggleState(String uuid, String toggleID);
+
+}
