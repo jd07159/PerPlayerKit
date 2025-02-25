@@ -21,6 +21,7 @@ package dev.noah.perplayerkit.listeners;
 import dev.noah.perplayerkit.KitManager;
 import dev.noah.perplayerkit.PerPlayerKit;
 import dev.noah.perplayerkit.util.CooldownManager;
+import com.destroystokyo.paper.event.player.PlayerPostRespawnEvent;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -40,41 +41,64 @@ public class AutoRekitListener implements Listener {
     }
 
     @EventHandler
-    public void onRespawn(PlayerRespawnEvent e) {
+    public void onPostRespawn(PlayerPostRespawnEvent e) {
         Player player = e.getPlayer();
         String uuid = player.getUniqueId().toString();
 
         String rekitOnRespawn = "rekit_on_respawn";
         boolean isRekitOnRespawn = PerPlayerKit.storageManager.getToggleState(uuid, rekitOnRespawn);
 
+        if (!isRekitOnRespawn) {
+            return;
+        }
+
+        if (!player.hasPermission("kit.use")) {
+            return;
+        }
+
+        KitManager.get().loadLastKit(player);
+    }
+
+
+    @EventHandler
+    public void onRespawn(PlayerRespawnEvent e) {
+        Player player = e.getPlayer();
+        String uuid = player.getUniqueId().toString();
+
         String autoBack = "autoback";
         boolean isAutoBack = PerPlayerKit.storageManager.getToggleState(uuid, autoBack);
 
-        if (isRekitOnRespawn) {
-            if (e.getPlayer().hasPermission("kit.use"))
-                KitManager.get().loadLastKit(player);
+        if (!isAutoBack) {
+            return;
         }
 
-        if (isAutoBack) {
-        Location deathLocation = player.getLastDeathLocation();
-            if (deathLocation != null) {
-                e.setRespawnLocation(deathLocation);
-            }
+        if (!player.hasPermission("kit.use")) {
+            return;
         }
+
+        Location deathLocation = player.getLastDeathLocation();
+        if (deathLocation == null) {
+            return;
+        }
+
+        e.setRespawnLocation(deathLocation);
     }
 
     @EventHandler
     public void onPlayerKill(PlayerDeathEvent e) {
         Player player = e.getEntity();
         Player killer = player.getKiller();
+        String rekitOnKill = "rekit_on_kill";
 
-        if (killer == null || !killer.hasPermission("kit.use")) {
+        if (killer == null || killer.equals(player)) {
+            return;
+        }
+
+        if (!killer.hasPermission("kit.use")) {
             return;
         }
 
         String uuid = killer.getUniqueId().toString();
-        String rekitOnKill = "rekit_on_kill";
-
         boolean isRekitOnKill = PerPlayerKit.storageManager.getToggleState(uuid, rekitOnKill);
         if (!isRekitOnKill) {
             return;
@@ -95,7 +119,13 @@ public class AutoRekitListener implements Listener {
             return;
         }
 
-        if (!player.isSneaking()) return;
+        if (!player.hasPermission("kit.use")) {
+            return;
+        }
+
+        if (!player.isSneaking()) {
+            return;
+        }
 
         if (cooldown.isOnCooldown(player)) {
             e.setCancelled(true);
@@ -103,10 +133,7 @@ public class AutoRekitListener implements Listener {
         }
 
         e.setCancelled(true);
-
-        if (player.hasPermission("kit.use")) {
-            KitManager.get().loadLastKit(player);
-            cooldown.setCooldown(player);
-        }
+        KitManager.get().loadLastKit(player);
+        cooldown.setCooldown(player);
     }
 }
