@@ -37,6 +37,10 @@ public class ToggleManager {
 
     private boolean getToggle(Player player, NamespacedKey key) {
         Byte value = player.getPersistentDataContainer().get(key, PersistentDataType.BYTE);
+        if (key.equals(autoBackKey)) {
+            return value != null && value == 1;
+        }
+
         return value == null || value == 1;
     }
 
