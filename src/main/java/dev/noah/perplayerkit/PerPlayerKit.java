@@ -19,6 +19,7 @@
 package dev.noah.perplayerkit;
 
 import dev.noah.perplayerkit.commands.*;
+import dev.noah.perplayerkit.commands.ToggleCommand;
 import dev.noah.perplayerkit.commands.extracommands.HealCommand;
 import dev.noah.perplayerkit.commands.extracommands.RepairCommand;
 import dev.noah.perplayerkit.commands.tabcompleters.ECSlotTabCompleter;
@@ -27,6 +28,7 @@ import dev.noah.perplayerkit.listeners.*;
 import dev.noah.perplayerkit.listeners.antiexploit.CommandListener;
 import dev.noah.perplayerkit.listeners.antiexploit.ShulkerDropItemsListener;
 import dev.noah.perplayerkit.listeners.features.OldDeathDropListener;
+import dev.noah.perplayerkit.papi.PerPlayerKitExpansion;
 import dev.noah.perplayerkit.storage.StorageManager;
 import dev.noah.perplayerkit.storage.StorageSelector;
 import dev.noah.perplayerkit.storage.exceptions.StorageConnectionException;
@@ -53,6 +55,11 @@ public final class PerPlayerKit extends JavaPlugin {
     @Override
     public void onEnable() {
         notice();
+
+        if (Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")) {
+            new PerPlayerKitExpansion().register();
+            getLogger().info("PlaceholderAPI expansion registered for PerPlayerKit.");
+        }
 
         int bstatsId = 24380;
         Metrics metrics = new Metrics(this, bstatsId);
@@ -160,6 +167,8 @@ public final class PerPlayerKit extends JavaPlugin {
         this.getCommand("publickit").setExecutor(publicKitCommand);
         this.getCommand("publickit").setTabCompleter(publicKitCommand);
 
+        ToggleCommand toggleCommand = new ToggleCommand(plugin);
+        this.getCommand("pktoggle").setExecutor(toggleCommand);
 
         for (int i = 1; i <= 9; i++) {
             this.getCommand("k" + i).setExecutor(new ShortKitCommand());

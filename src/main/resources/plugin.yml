@@ -32,6 +32,7 @@ permissions:
       perplayerkit.regear: true
       perplayerkit.heal: true
       perplayerkit.repair: true
+      perplayerkit.toggle: true
 
 
 commands:
@@ -189,3 +190,6 @@ commands:
     usage: /<command>
     permission: perplayerkit.repair
 
+  pktoggle:
+    usage: /<command>
+    permission: perplayerkit.toggle

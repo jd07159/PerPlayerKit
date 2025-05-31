@@ -18,27 +18,38 @@
  */
 package dev.noah.perplayerkit.listeners;
 
+import com.destroystokyo.paper.event.player.PlayerPostRespawnEvent;
 import dev.noah.perplayerkit.KitManager;
+import dev.noah.perplayerkit.util.DisabledCommand;
+import dev.noah.perplayerkit.util.ToggleManager;
+import dev.noah.perplayerkit.util.CooldownManager;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
+import org.bukkit.event.player.PlayerSwapHandItemsEvent;
 import org.bukkit.plugin.Plugin;
 
 public class AutoRekitListener implements Listener {
 
     private final Plugin plugin;
+    private final CooldownManager cooldown = new CooldownManager(1);
 
     public AutoRekitListener(Plugin plugin) {
         this.plugin = plugin;
     }
 
     @EventHandler
-    public void onRespawn(PlayerRespawnEvent e) {
+    public void onPostRespawn(PlayerPostRespawnEvent e) {
+        Player player = e.getPlayer();
+        ToggleManager toggleManager = ToggleManager.get(player);
 
+        if (DisabledCommand.isBlockedInWorld(player)) {
+            return;
+        }
 
-        if (!plugin.getConfig().getBoolean("feature.rekit-on-respawn", true)) {
+        if (!toggleManager.isRekitOnRespawn(player)) {
             return;
         }
 
@@ -51,15 +62,67 @@ public class AutoRekitListener implements Listener {
     }
 
     @EventHandler
-    public void onPlayerKill(PlayerDeathEvent e) {
+    public void onSwap(PlayerSwapHandItemsEvent e) {
+        Player player = e.getPlayer();
+        ToggleManager toggleManager = ToggleManager.get(player);
 
-
-        if (!plugin.getConfig().getBoolean("feature.rekit-on-kill", false)) {
+        if (DisabledCommand.isBlockedInWorld(player)) {
             return;
         }
 
-        Player killer = e.getEntity().getKiller();
-        if (killer == null) {
+        if (!toggleManager.isHotKey(player)) {
+            return;
+        }
+        if (!player.hasPermission("kit.use")) {
+            return;
+        }
+
+        if (!player.isSneaking()) {
+            return;
+        }
+
+        if (this.cooldown.isOnCooldown(player)) {
+            e.setCancelled(true);
+            return;
+        }
+
+        e.setCancelled(true);
+        KitManager.get().loadLastKit(player);
+        this.cooldown.setCooldown(player);
+    }
+
+    @EventHandler
+    public void onRespawn(PlayerRespawnEvent e) {
+        Player player = e.getPlayer();
+        ToggleManager toggleManager = ToggleManager.get(player);
+
+        if (DisabledCommand.isBlockedInWorld(player)) {
+            return;
+        }
+
+        if (!toggleManager.isAutoBack(player)) {
+            return;
+        }
+
+        if (!e.getPlayer().hasPermission("kit.use")) {
+            return;
+        }
+
+        if (player.getLastDeathLocation() != null) {
+            e.setRespawnLocation(player.getLastDeathLocation());
+        }
+    }
+
+    @EventHandler
+    public void onPlayerKill(PlayerDeathEvent e) {
+        Player player = e.getEntity();
+        Player killer = player.getKiller();
+
+        if (killer == player || killer == null) {
+            return;
+        }
+
+        if (DisabledCommand.isBlockedInWorld(killer)) {
             return;
         }
 
@@ -67,8 +130,12 @@ public class AutoRekitListener implements Listener {
             return;
         }
 
+        ToggleManager toggleManager = ToggleManager.get(killer);
+
+        if (!toggleManager.isRekitOnKill(killer)) {
+            return;
+        }
+
         KitManager.get().loadLastKit(killer);
-
     }
-
 }
